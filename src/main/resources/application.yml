@@ -1,0 +1,4 @@
+# banner图配置开启或关闭
+spring:
+  main:
+    banner-mode: console
