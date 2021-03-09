@@ -19,13 +19,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.awt.Color;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.List;
@@ -58,14 +55,9 @@ public class ExcelUtils {
          　　　　POI 提供了对2003版本的Excel的支持 ---- HSSFWorkbook
          　　　　POI 提供了对2007版本以及更高版本的支持 ---- XSSFWorkbook
          */
-
-        String downloadPath = "D:/test/";
-        FileOutputStream os = null ;
-
         //创建Excel工作簿
         HSSFWorkbook wb = new HSSFWorkbook();
         try {
-            os = new FileOutputStream(downloadPath + "123.xls");
             //设置工作表名称,为空默名认为Sheet1
             String sheetName = data.getName();
             if (null == sheetName) {
@@ -75,14 +67,14 @@ public class ExcelUtils {
             HSSFSheet sheet = wb.createSheet(sheetName);
             //参数:工作簿、工作表、数据
             writeExcel(wb, sheet, data, i);
-            wb.write(os);
+            wb.write(out);
         } catch (Exception e) {
             log.error("错误信息", e);
         }
-//        finally {
-//            //此处需要关闭 wb 变量
-//            out.close();
-//        }
+        finally {
+            //此处需要关闭 wb 变量
+            out.close();
+        }
     }
 
     private static void writeExcel(HSSFWorkbook wb, Sheet sheet, ExcelData data, Integer i) {
@@ -246,7 +238,6 @@ public class ExcelUtils {
         return rowIndex;
     }
 
-
     //填充和颜色设置
     private static int writeRowsToExcel(HSSFWorkbook wb, Sheet sheet, List<List<Object>> rows, int rowIndex) {
         int colIndex;
@@ -297,82 +288,6 @@ public class ExcelUtils {
         style.setBorderRight(border);
         //下边框
         style.setBorderBottom(border);
-    }
-
-    /**
-     * 导入
-     */
-
-    //导入
-    private static int getRowIndex2(Sheet sheet, List<String> yiji, int rowIndex, HSSFCellStyle titleStyle) {
-        //列数
-        int colIndex;
-        colIndex = 1;
-        rowIndex++;
-        Row titleRow2 = sheet.createRow(rowIndex);
-        int preColNum1 = 20;
-        setEmptyCellStyle(titleRow2, 0, preColNum1, titleStyle);
-        // 添加斜杠
-        setDiagonal(sheet, titleStyle, titleRow2);
-        for (int m = 0; m < yiji.size(); m++) {
-            String s = yiji.get(m);
-            //创建Excel工作表指定行的单元格
-            Cell cell = titleRow2.createCell(colIndex);
-            //单元格内容
-            cell.setCellValue(s);
-            //自定义颜色
-            cell.setCellStyle(titleStyle);
-            if (m == 0) {
-                colIndex += 4;
-            } else if (m == 1) {
-                colIndex += 3;
-            } else {
-                colIndex += 4;
-            }
-        }
-        return rowIndex;
-    }
-
-    private static int getRowIndex3(Sheet sheet, List<String> erji, int rowIndex, HSSFCellStyle titleStyle) {
-        //列数
-        int colIndex;
-        colIndex = 1;
-        rowIndex++;
-        Row titleRow2 = sheet.createRow(rowIndex);
-        int preColNum1 = 19;
-        setEmptyCellStyle(titleRow2, 0, preColNum1, titleStyle);
-        for (int m = 0; m < erji.size(); m++) {
-            String s = erji.get(m);
-            //创建Excel工作表指定行的单元格
-            Cell cell = titleRow2.createCell(colIndex);
-            //单元格内容
-            cell.setCellValue(s);
-            //自定义颜色
-            cell.setCellStyle(titleStyle);
-            colIndex += 1;
-        }
-        return rowIndex;
-    }
-
-    private static Sheet createWorkBook(String fileName, MultipartFile filePath) {
-        boolean isExcel2003;
-        XSSFWorkbook wb;
-        HSSFWorkbook wh;
-        Sheet sheet = null;
-        try {
-            InputStream is = filePath.getInputStream();
-            isExcel2003 = !fileName.matches("^.+\\.(?i)(xlsx)$");
-            if (isExcel2003) {
-                wh = new HSSFWorkbook(is);
-                sheet = wh.getSheetAt(0);
-            } else {
-                wb = new XSSFWorkbook(is);
-                sheet = wb.getSheetAt(0);
-            }
-        } catch (Exception e) {
-            log.error("错误信息", e);
-        }
-        return sheet;
     }
 
     /**
