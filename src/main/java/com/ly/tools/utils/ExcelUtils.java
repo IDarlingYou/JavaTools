@@ -24,14 +24,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.awt.Color;
-import java.awt.Font;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.List;
 
 @Slf4j
-public class ExcelUtils3 {
+public class ExcelUtils {
 
     public static void exportExcel(HttpServletResponse response, String fileName, ExcelData data, Integer i) throws Exception {
 
@@ -58,25 +58,31 @@ public class ExcelUtils3 {
          　　　　POI 提供了对2003版本的Excel的支持 ---- HSSFWorkbook
          　　　　POI 提供了对2007版本以及更高版本的支持 ---- XSSFWorkbook
          */
+
+        String downloadPath = "D:/test/";
+        FileOutputStream os = null ;
+
         //创建Excel工作簿
         HSSFWorkbook wb = new HSSFWorkbook();
         try {
-            //设置工作表名称 为空默名认为Sheet1
+            os = new FileOutputStream(downloadPath + "123.xls");
+            //设置工作表名称,为空默名认为Sheet1
             String sheetName = data.getName();
             if (null == sheetName) {
                 sheetName = "Sheet1";
             }
             //创建Excel工作表
             HSSFSheet sheet = wb.createSheet(sheetName);
-            //参数：  工作簿、工作表、数据
+            //参数:工作簿、工作表、数据
             writeExcel(wb, sheet, data, i);
-            wb.write(out);
+            wb.write(os);
         } catch (Exception e) {
-            log.error("错误信息",e);
-        } finally {
-            //此处需要关闭 wb 变量
-            out.close();
+            log.error("错误信息", e);
         }
+//        finally {
+//            //此处需要关闭 wb 变量
+//            out.close();
+//        }
     }
 
     private static void writeExcel(HSSFWorkbook wb, Sheet sheet, ExcelData data, Integer i) {
@@ -89,12 +95,11 @@ public class ExcelUtils3 {
         }
         //自动根据长度调整单元格长度
         autoSizeColumns(sheet, data.getTitles().size() + 1);
-
     }
 
-    private static HSSFCellStyle titleStyle(HSSFWorkbook wb, Short i, String typeFace ) {
+    private static HSSFCellStyle titleStyle(HSSFWorkbook wb, Short i, String typeFace) {
         //字体类
-       // Font titleFont = wb.createFont();
+        // Font titleFont = wb.createFont();
         HSSFFont titleFont = wb.createFont();
         //设置字体类型
         // titleFont.setFontName("simsun");
@@ -111,7 +116,6 @@ public class ExcelUtils3 {
         titleStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         titleStyle.setAlignment(HorizontalAlignment.CENTER);
         //自定义颜色
-       // titleStyle.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
         // 设置背景颜色
         titleStyle.setFillForegroundColor(i);
         //设置填充方案
@@ -119,24 +123,23 @@ public class ExcelUtils3 {
         //设置字体样式
         titleStyle.setFont(titleFont);
         // 边框颜色
-        setBorder(titleStyle, BorderStyle.THIN, new XSSFColor(new Color(169,169,169)));
+        setBorder(titleStyle, BorderStyle.THIN, new XSSFColor(new Color(169, 169, 169)));
         return titleStyle;
     }
 
-    //写标题内容
-    private static int writeTitlesToExcel(HSSFWorkbook wb, Sheet sheet,String paymentDays, List<String> yiji, List<String> erji, Integer i) {
-        //行数
+    // 写标题内容
+    private static int writeTitlesToExcel(HSSFWorkbook wb, Sheet sheet, String paymentDays, List<String> yiji, List<String> erji, Integer i) {
+        // 行数
         int rowIndex = 0;
-        //列数
+        // 列数
         int colIndex = 0;
-        //创建Excel工作表的行
+        // 创建Excel工作表的行
         Row titleRow = sheet.createRow(rowIndex);
-        // titleRow.setHeightInPoints(25);
-        rowIndex = getRowIndex(wb , sheet,paymentDays ,  yiji, erji, rowIndex, colIndex, titleRow, i);
+        rowIndex = getRowIndex(wb, sheet, paymentDays, yiji, erji, rowIndex, colIndex, titleRow, i);
         return rowIndex;
     }
 
-    private static int getRowIndex(HSSFWorkbook wb,Sheet sheet, String paymentDays , List<String> yiji, List<String> erji, int rowIndex, int colIndex,  Row titleRow, Integer i) {
+    private static int getRowIndex(HSSFWorkbook wb, Sheet sheet, String paymentDays, List<String> yiji, List<String> erji, int rowIndex, int colIndex, Row titleRow, Integer i) {
         HSSFCellStyle titleStyle = titleStyle(wb, IndexedColors.YELLOW.getIndex(), "simsun");
         HSSFCellStyle titleStyle1 = titleStyle(wb, IndexedColors.WHITE.getIndex(), "simsun");
 
@@ -151,13 +154,34 @@ public class ExcelUtils3 {
                 cell.setCellStyle(titleStyle);
                 colIndex++;
             }
+        } else if (i == 3) {
+            // 创建表头
+            sheet.createRow(rowIndex);
+
+            int preColNum1 = 4;
+            setEmptyCellStyle(titleRow, 0, preColNum1, titleStyle);
+            // 添加斜杠
+            Row titleRow1 = sheet.createRow(rowIndex);
+            setEmptyCellStyle(titleRow1, 0, 1, titleStyle1);
+            setDiagonal(sheet, titleStyle1, titleRow1);
+            // 标题内容填充
+            for (String field : erji) {
+                //创建Excel工作表指定行的单元格
+                Cell cell = titleRow.createCell(colIndex + 1);
+                //单元格内容
+                cell.setCellValue(field);
+                //自定义颜色
+                cell.setCellStyle(titleStyle);
+                colIndex++;
+            }
+
         } else if (i == 1) {
             colIndex = 0;
             sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 4));
             sheet.addMergedRegion(new CellRangeAddress(1, 2, 0, 0));
-            if (yiji.size()==3){
+            if (yiji.size() == 3) {
                 sheet.addMergedRegion(new CellRangeAddress(1, 1, 1, 4));
-            }else {
+            } else {
                 sheet.addMergedRegion(new CellRangeAddress(1, 1, 1, erji.size()));
             }
             sheet.addMergedRegion(new CellRangeAddress(1, 1, 5, 8));
@@ -167,75 +191,16 @@ public class ExcelUtils3 {
             setEmptyCellStyle(titleRow, 0, preColNum1, titleStyle);
 
             // 设置标题
-            Cell cell1 = titleRow.createCell(colIndex );
+            Cell cell1 = titleRow.createCell(colIndex);
             //单元格内容
             cell1.setCellValue(paymentDays);
             //自定义颜色
             cell1.setCellStyle(titleStyle);
 
             // 添加斜杠
-            Row titleRow1 = sheet.createRow(rowIndex+1);
+            Row titleRow1 = sheet.createRow(rowIndex + 1);
             setEmptyCellStyle(titleRow1, 0, preColNum1, titleStyle1);
-            setDiagonal(sheet,  titleStyle1 , titleRow1);
-
-            //设置边框
-            for (String field : yiji) {
-                //创建Excel工作表指定行的单元格
-                Cell cell = titleRow1.createCell(colIndex + 1);
-                //单元格内容
-                cell.setCellValue(field);
-                //自定义颜色
-               cell.setCellStyle(titleStyle1);
-                colIndex += 4;
-            }
-            rowIndex = getRowIndex(sheet, erji, rowIndex+1, titleStyle1);
-        } else if (i == 2) {
-            colIndex = 0;
-            // 合并第一列的前两行
-            sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, 0));
-            // 合并第一行的第二列到第四列
-            sheet.addMergedRegion(new CellRangeAddress(0, 0, 1, 3));
-            // 合并第一行的第四列到第10列
-            sheet.addMergedRegion(new CellRangeAddress(0, 0, 3, 9));
-            //设置边框
-            for (int j = 0; j < yiji.size(); j++) {
-                String field = yiji.get(j);
-                //创建Excel工作表指定行的单元格
-                Cell cell = titleRow.createCell(colIndex + 1);
-                //单元格内容
-                cell.setCellValue(field);
-                //自定义颜色
-                cell.setCellStyle(titleStyle);
-                if (j == yiji.size() - 1) {
-                    colIndex += 4;
-                } else {
-                    colIndex += 5;
-                }
-            }
-            rowIndex = getRowIndex(sheet, erji, rowIndex, titleStyle);
-        } else if (i == 3) {
-            colIndex = 0;
-
-            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 3));
-
-            sheet.addMergedRegion(new CellRangeAddress(1, 2, 0, 0));
-
-            sheet.addMergedRegion(new CellRangeAddress(1, 1, 1, 3));
-
-            int preColNum1 = 4;
-            setEmptyCellStyle(titleRow, 0, preColNum1, titleStyle);
-
-            // 设置标题
-            Cell cell1 = titleRow.createCell(colIndex );
-            //单元格内容
-            cell1.setCellValue(paymentDays);
-            //自定义颜色
-            cell1.setCellStyle(titleStyle);
-
-            // 添加斜杠
-            Row titleRow1 = sheet.createRow(rowIndex+1);
-            setEmptyCellStyle(titleRow1, 0, preColNum1, titleStyle1);
-            setDiagonal(sheet,  titleStyle1 , titleRow1);
+            setDiagonal(sheet, titleStyle1, titleRow1);
 
             //设置边框
             for (String field : yiji) {
@@ -245,9 +210,9 @@ public class ExcelUtils3 {
                 cell.setCellValue(field);
                 //自定义颜色
                 cell.setCellStyle(titleStyle1);
-                colIndex += 3;
+                colIndex += 4;
             }
-            rowIndex = getRowIndex(sheet, erji, rowIndex+1, titleStyle1);
+            rowIndex = getRowIndex(sheet, erji, rowIndex + 1, titleStyle1);
         }
         rowIndex++;
         return rowIndex;
@@ -259,13 +224,13 @@ public class ExcelUtils3 {
         rowIndex++;
         Row titleRow2 = sheet.createRow(rowIndex);
         int preColNum1;
-        if(erji.size() < 4){
+        if (erji.size() < 4) {
             preColNum1 = 4;
-        }else if(erji.size() == 4){
+        } else if (erji.size() == 4) {
             preColNum1 = 5;
-        }else if(erji.size() == 5){
+        } else if (erji.size() == 5) {
             preColNum1 = 6;
-        }else {
+        } else {
             preColNum1 = 5;
         }
         setEmptyCellStyle(titleRow2, 0, preColNum1, titleStyle);
@@ -287,16 +252,11 @@ public class ExcelUtils3 {
         int colIndex;
         HSSFFont dataFont = wb.createFont();
         dataFont.setFontName("simsun");
-        // dataFont.setFontHeightInPoints((short) 14);
         dataFont.setColor(IndexedColors.BLACK.index);
         HSSFCellStyle dataStyle = wb.createCellStyle();
-//        dataStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER);
-//        dataStyle.setVerticalAlignment(XSSFCellStyle.VERTICAL_CENTER);
         dataStyle.setFont(dataFont);
-      //  setBorder(dataStyle, BorderStyle.THIN, new XSSFColor(new Color(0, 0, 0)));
         for (List<Object> rowData : rows) {
             Row dataRow = sheet.createRow(rowIndex);
-            // dataRow.setHeightInPoints(25);
             colIndex = 0;
 
             for (Object cellData : rowData) {
@@ -307,7 +267,7 @@ public class ExcelUtils3 {
                     cell.setCellValue("");
                 }
 
-               cell.setCellStyle(dataStyle);
+                cell.setCellStyle(dataStyle);
                 colIndex++;
             }
             rowIndex++;
@@ -337,12 +297,8 @@ public class ExcelUtils3 {
         style.setBorderRight(border);
         //下边框
         style.setBorderBottom(border);
-//        //边框样式
-//        style.setBorderColor(BorderSide.TOP, color);
-//        style.setBorderColor(BorderSide.LEFT, color);
-//        style.setBorderColor(BorderSide.RIGHT, color);
-//        style.setBorderColor(BorderSide.BOTTOM, color);
     }
+
     /**
      * 导入
      */
@@ -357,20 +313,20 @@ public class ExcelUtils3 {
         int preColNum1 = 20;
         setEmptyCellStyle(titleRow2, 0, preColNum1, titleStyle);
         // 添加斜杠
-        setDiagonal(  sheet,  titleStyle , titleRow2);
-        for (int m = 0; m < yiji.size()  ; m++) {
+        setDiagonal(sheet, titleStyle, titleRow2);
+        for (int m = 0; m < yiji.size(); m++) {
             String s = yiji.get(m);
             //创建Excel工作表指定行的单元格
-            Cell cell = titleRow2.createCell(colIndex );
+            Cell cell = titleRow2.createCell(colIndex);
             //单元格内容
             cell.setCellValue(s);
             //自定义颜色
             cell.setCellStyle(titleStyle);
             if (m == 0) {
                 colIndex += 4;
-            } else if(m == 1) {
+            } else if (m == 1) {
                 colIndex += 3;
-            }else {
+            } else {
                 colIndex += 4;
             }
         }
@@ -385,10 +341,10 @@ public class ExcelUtils3 {
         Row titleRow2 = sheet.createRow(rowIndex);
         int preColNum1 = 19;
         setEmptyCellStyle(titleRow2, 0, preColNum1, titleStyle);
-        for (int m = 0; m < erji.size()  ; m++) {
+        for (int m = 0; m < erji.size(); m++) {
             String s = erji.get(m);
             //创建Excel工作表指定行的单元格
-            Cell cell = titleRow2.createCell(colIndex );
+            Cell cell = titleRow2.createCell(colIndex);
             //单元格内容
             cell.setCellValue(s);
             //自定义颜色
@@ -414,7 +370,7 @@ public class ExcelUtils3 {
                 sheet = wb.getSheetAt(0);
             }
         } catch (Exception e) {
-            log.error("错误信息",e);
+            log.error("错误信息", e);
         }
         return sheet;
     }
@@ -422,31 +378,14 @@ public class ExcelUtils3 {
     /**
      * 添加斜杠
      */
-    private static void setDiagonal(Sheet sheet, HSSFCellStyle titleStyle , Row titleRow) {
+    private static void setDiagonal(Sheet sheet, HSSFCellStyle titleStyle, Row titleRow) {
         // 添加斜杠
-        Cell cell0 = titleRow.createCell(0 );
+        Cell cell0 = titleRow.createCell(0);
         cell0.setCellValue("机构    类型");
         cell0.setCellStyle(titleStyle);
         //画线(由左上到右下的斜线)  在A1的第一个cell（单位  分类）加入一条对角线
         HSSFPatriarch patriarch = (HSSFPatriarch) sheet.createDrawingPatriarch();
-        HSSFClientAnchor a = new HSSFClientAnchor(0, 0, 1023, 255, (short) 0, 1, (short) 0, 2);
-        // 创建形状（直线）
-        HSSFSimpleShape shape1 = patriarch.createSimpleShape(a);
-        shape1.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
-        shape1.setLineStyle(HSSFSimpleShape.LINESTYLE_SOLID);
-    }
-
-    /**
-     * 添加斜杠
-     */
-    private static void setDiagonal1(Sheet sheet, HSSFCellStyle titleStyle , Row titleRow) {
-        // 添加斜杠
-        Cell cell0 = titleRow.createCell(0 );
-        cell0.setCellValue("机构    类型");
-        cell0.setCellStyle(titleStyle);
-        //画线(由左上到右下的斜线)  在A1的第一个cell（单位  分类）加入一条对角线
-        HSSFPatriarch patriarch = (HSSFPatriarch) sheet.createDrawingPatriarch();
-        HSSFClientAnchor a = new HSSFClientAnchor(0, 0, 1023, 255, (short) 0, 0, (short) 0, 1);
+        HSSFClientAnchor a = new HSSFClientAnchor(0, 0, 1023, 255, (short) 0, 0, (short) 0, 0);
         // 创建形状（直线）
         HSSFSimpleShape shape1 = patriarch.createSimpleShape(a);
         shape1.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
@@ -455,6 +394,7 @@ public class ExcelUtils3 {
 
     /**
      * 设置合并表格，空缺单元格样式
+     *
      * @param row
      * @param startNum
      * @param endNum

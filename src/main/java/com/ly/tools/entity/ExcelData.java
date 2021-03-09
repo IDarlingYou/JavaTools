@@ -9,11 +9,6 @@ import java.util.List;
 public class ExcelData implements Serializable {
 
     /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
-
-    /**
      * 账期
      */
     private String paymentDays;
