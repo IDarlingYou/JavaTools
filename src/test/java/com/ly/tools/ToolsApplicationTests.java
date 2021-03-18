@@ -1,6 +1,7 @@
 package com.ly.tools;
 
-import com.ly.tools.entity.ExcelData;
+
+import com.ly.tools.entity.ExcelDatas;
 import com.ly.tools.utils.ExcelUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +15,7 @@ class ToolsApplicationTests {
     @Test
     void contextLoads() {
         // 测试excel导出
-        ExcelData excelData = new ExcelData();
+        ExcelDatas excelData = new ExcelDatas();
         excelData.setName("纸质对账");
         // 设置标题
         List<String> titles1 = new ArrayList<>();
