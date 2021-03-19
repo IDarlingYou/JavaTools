@@ -1,7 +1,7 @@
 package com.ly.tools.utils;
 
 
-import com.ly.tools.entity.ExcelDatas;
+import com.ly.tools.entity.ExcelData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
@@ -23,7 +23,6 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 
 import javax.servlet.http.HttpServletResponse;
 import java.awt.Color;
-import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.List;
@@ -31,7 +30,7 @@ import java.util.List;
 @Slf4j
 public class ExcelUtils {
 
-    public static void exportExcel(HttpServletResponse response, String fileName, ExcelDatas data, Integer i) throws Exception {
+    public static void exportExcel(HttpServletResponse response, String fileName, ExcelData data, Integer i) throws Exception {
 
         // 告诉浏览器用什么软件可以打开此文件
         response.setHeader("content-Type", "application/vnd.ms-excel");
@@ -50,7 +49,7 @@ public class ExcelUtils {
      * @param data 传入要写的内容，此处以一个ExcelData分装类内容为例
      * @param out  把输出流怼到要写入的Excel上，然后往里面写数据
      */
-    public static void exportExcel(ExcelDatas data, OutputStream out, Integer i) throws Exception {
+    public static void exportExcel(ExcelData data, OutputStream out, Integer i) throws Exception {
         /**
          　　　　使用的是JAVA POI实现的导出Excel表；
          　　　　POI 提供了对2003版本的Excel的支持 ---- HSSFWorkbook
@@ -77,7 +76,7 @@ public class ExcelUtils {
         }
     }
 
-    private static void writeExcel(HSSFWorkbook wb, Sheet sheet, ExcelDatas data, Integer i) {
+    private static void writeExcel(HSSFWorkbook wb, Sheet sheet, ExcelData data, Integer i) {
         int rowIndex;
         //写标题内容
         rowIndex = writeTitlesToExcel(wb, sheet, data.getPaymentDays(), data.getTitles(), data.getErji(), i);

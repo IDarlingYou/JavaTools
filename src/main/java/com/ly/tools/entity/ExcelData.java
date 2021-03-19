@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class ExcelDatas implements Serializable {
+public class ExcelData implements Serializable {
 
     /**
      * 账期
