@@ -12,10 +12,6 @@ import java.util.stream.Collectors;
 @SpringBootTest
 class ToolsApplicationTests1 {
 
-    interface MathOperation {
-        int operation(int a, int b);
-    }
-
     /**
      * java8新特性
      */
@@ -47,8 +43,6 @@ class ToolsApplicationTests1 {
         // 多线程下，使用并行流会有线程安全的问题
         // 三、Java 8通过发布新的Date-Time API (JSR 310)来进一步加强对日期与时间的处理。
         LocalDateTime now = LocalDateTime.now();
-
-
 
     }
 

@@ -2,7 +2,7 @@ package com.ly.tools;
 
 
 import com.ly.tools.entity.ExcelData;
-import com.ly.tools.utils.ExcelUtils;
+import com.ly.tools.utils.ExcelExportUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -40,7 +40,7 @@ class ToolsApplicationTests {
         excelData.setRows(content);
         // 调用导出
         try {
-            ExcelUtils.exportExcel(excelData , null,3);
+            ExcelExportUtils.exportExcel(excelData , null,3);
         } catch (Exception e) {
             e.printStackTrace();
         }

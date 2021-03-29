@@ -26,10 +26,21 @@ import java.awt.Color;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.List;
-
+/**
+ * @Author: LY
+ * @Date: 2021/3/9 17:30
+ * @Description: excel文件导出
+ **/
 @Slf4j
-public class ExcelUtils {
+public class ExcelExportUtils {
 
+    /**
+     * excel文件导出
+     *
+     * @param fileName  文件名
+     * @param data  数据
+     * @param i  单元格合并方式(自己配置)
+     */
     public static void exportExcel(HttpServletResponse response, String fileName, ExcelData data, Integer i) throws Exception {
 
         // 告诉浏览器用什么软件可以打开此文件
@@ -90,20 +101,15 @@ public class ExcelUtils {
 
     private static HSSFCellStyle titleStyle(HSSFWorkbook wb, Short i, String typeFace) {
         //字体类
-        // Font titleFont = wb.createFont();
         HSSFFont titleFont = wb.createFont();
         //设置字体类型
-        // titleFont.setFontName("simsun");
         titleFont.setFontName(typeFace);
         //设置字体大小
-        //titleFont.setFontHeightInPoints((short) 14);
         titleFont.setColor(IndexedColors.BLACK.index);
         //设置是否加粗
         //titleFont.setBold(true);
         //创建单元格样式
         HSSFCellStyle titleStyle = wb.createCellStyle();
-        //titleStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER);
-        //titleStyle.setVerticalAlignment(XSSFCellStyle.VERTICAL_CENTER);
         titleStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         titleStyle.setAlignment(HorizontalAlignment.CENTER);
         //自定义颜色
@@ -165,7 +171,6 @@ public class ExcelUtils {
                 cell.setCellStyle(titleStyle);
                 colIndex++;
             }
-
         } else if (i == 1) {
             colIndex = 0;
             sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 4));

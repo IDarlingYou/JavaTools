@@ -1,32 +1,33 @@
 package com.ly.tools;
 
+import com.ly.tools.entity.ExcelData;
+import com.ly.tools.utils.JsonUtils;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class ToolsApplicationTests2 {
 
-    public static void main(String[] args) {
-        int a = 2;
-        int b = 3;
-        int c = 4;
-        int d = a > b ? 0 : c > b ? 1 : 0;
-        // 可以用括号分开来看，会比较清楚
-        // int d = a > b ? 0 : (c > b ? 1 : 0);
-        System.out.println("值1:" + (c > b ? 1 : 0));
-        System.out.println("值2:" + d);
-
-        if (a > b) {
-            d = 0;
-        } else {
-            if (c > b) {
-                d = 1;
-            } else {
-                d = 0;
-            }
+    @Test
+    public void testJson() {
+        ExcelData e = new ExcelData();
+        e.setName("王霸天");
+        System.out.println("-------------------");
+        String s = null;
+        try {
+            s = JsonUtils.objectToJson(e);
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
-        System.out.println(d);
+        System.out.println("测试对象转json:" + s);
+
+        System.out.println("-------------------");
+
+        Object a = "{\"paymentDays\":null,\"titles\":null,\"erji\":null,\"sanji\":null,\"rows\":null,\"name\":\"王霸天\"}";
+
+        ExcelData pojo = JsonUtils.jsonToPojo(String.valueOf(a), ExcelData.class);
+        System.out.println("测试json转pojo:" + pojo);
 
     }
-
 
 }
