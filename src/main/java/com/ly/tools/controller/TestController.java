@@ -1,6 +1,9 @@
 package com.ly.tools.controller;
 
+import com.ly.tools.entity.Teacher;
+import com.ly.tools.mapper.TeacherMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @Author: LY
@@ -10,16 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TestController {
 
-    public static void main(String[] args) {
-        log.error("error级别的错误");
-
-        log.info("info级别的错误");
-
-        log.warn("warn级别的错误");
-
-
-    }
-
+    @Autowired
+    private TeacherMapper teacherMapper;
 
 
 
