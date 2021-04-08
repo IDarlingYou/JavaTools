@@ -19,8 +19,6 @@ class ToolsApplicationTests4 {
         map.put("month", "12");
         map.put("day", "1");
         ExportPDF.createPdf("D:\\MD\\logs\\cp.pdf", "D:\\MD\\cpp.pdf", map);
-
-
     }
 
 }

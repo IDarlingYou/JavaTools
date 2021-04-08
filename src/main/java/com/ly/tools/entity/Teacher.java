@@ -1,5 +1,7 @@
 package com.ly.tools.entity;
 
+import lombok.Data;
+
 import java.util.Objects;
 
 /**
@@ -7,6 +9,7 @@ import java.util.Objects;
  * @Date: 2021/4/7 09:40
  * @Description:
  **/
+@Data
 public class Teacher {
 
     private Integer id;
