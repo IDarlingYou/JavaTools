@@ -28,6 +28,9 @@ spring:
     # 连接超时时间（毫秒）
     timeout: 10000
 
+# 配置swagger开启关闭
+swagger.show: true
+
 # 指定端口
 server:
   port: 9999
@@ -35,3 +38,7 @@ server:
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+eyes:
+  url: https://open.api.tianyancha.com/services/open/m/bids/2.0?
+  url1: https://open.api.tianyancha.com/services/open/ic/baseinfoV2/2.0?
+  token: 120dc8fe-d9eb-47ac-a32b-92ee0d7c36e2

@@ -3,7 +3,7 @@
 
 <mapper namespace="com.ly.tools.mapper.TeacherMapper">
     <!-- 可根据自己的需求，是否要使用 -->
-    <resultMap type="com.ly.tools.entity.Teacher" id="acctCharMap">
+    <resultMap type="com.ly.tools.entity.po.Teacher" id="acctCharMap">
         <result property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="age" column="age"/>

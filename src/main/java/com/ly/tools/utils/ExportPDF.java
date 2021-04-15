@@ -2,13 +2,13 @@ package com.ly.tools.utils;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfImportedPage;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
+@Slf4j
 public class ExportPDF {
 
     /**
@@ -25,14 +26,14 @@ public class ExportPDF {
      * @param newFilePath  导出的路径
      * @param data         传入数据
      */
-    public static void createPdf(String templatePath, String newFilePath, Map<String, Object> data) {
+    public static String createPdf(String templatePath, String newFilePath, Map<String, Object> data) {
         PdfReader reader;
         FileOutputStream out;
         ByteArrayOutputStream bos;
         PdfStamper stamper;
         try {
             try {                                       //↓↓↓↓↓这个是字体文件
-               // BaseFont bf = BaseFont.createFont("C:\\Windows\\Fonts\\simsun.ttc,1", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                // BaseFont bf = BaseFont.createFont("C:\\Windows\\Fonts\\simsun.ttc,1", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
                 BaseFont bf = BaseFont.createFont("src\\main\\resources\\Fonts\\simsun.ttc,1", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
                 // 输出流
                 out = new FileOutputStream(newFilePath);
@@ -63,11 +64,13 @@ public class ExportPDF {
                 }
                 doc.close();
                 System.err.println("生成pdf文件完成~~~~~~~~~~");
+                return newFilePath;
             } catch (IOException | DocumentException e) {
-                System.out.println(e);
+                log.error("生成pdf文件生成失败", e);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("生成pdf文件生成失败", e);
         }
+        return null;
     }
 }

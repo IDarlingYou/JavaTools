@@ -1,6 +1,6 @@
 package com.ly.tools.service;
 
-import com.ly.tools.entity.Teacher;
+import com.ly.tools.entity.po.Teacher;
 
 import java.util.List;
 

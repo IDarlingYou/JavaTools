@@ -1,4 +1,4 @@
-package com.ly.tools.entity;
+package com.ly.tools.entity.po;
 
 import lombok.Data;
 
