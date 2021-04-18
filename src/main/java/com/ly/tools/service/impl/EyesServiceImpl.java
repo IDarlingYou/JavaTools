@@ -193,39 +193,44 @@ public class EyesServiceImpl implements EyesService {
      */
     public String getRelatedCompany(String content) {
         String company = "";
+        int i1;
+        int i2 = 0;
         String s = EyesMesConstants.purchaser.COMPANY_OTHER.getName() + "," + EyesMesConstants.purchaser.COMPANY.getName();
         String[] split = s.split(",");
-        int i1;
         for (String s1 : split) {
             for (int j = 0; j < content.length(); j++) {
-                // 根据公司去匹配
-                int i3 = content.indexOf(s1);
-                if (i3 < 0) {
+                // 根据公司/分公司去匹配
+                if (j == 0) {
+                    i1 = content.indexOf(s1);
+                } else {
+                    i1 = content.indexOf(s1, i2 + s1.length());
+                }
+                i2 = i1;
+                if (i1 < 0) {
                     break;
                 }
-                i1 = content.indexOf(s1, (j + s1.length()));
-                if (i1 >= 0) {
-                    // 逐字查询公司
-                    for (int i = 2; i < 49; i++) {
-                        if ((i > content.length())) {
-                            break;
-                        }
-                        if ((i1 - i) >= 0) {
-                            String com = content.substring(i1 - i, i1 + s1.length());
-                            String result = checkCompany(com);
-                            JSONObject jsonObject = JSONObject.parseObject(result);
-                            String errorCode = jsonObject.getString("error_code");
-                            if ("0".equals(errorCode)) {
-                                JSONObject result1 = JSONObject.parseObject(jsonObject.getString("result"));
-                                String name = result1.getString("name");
-                                int i2 = content.indexOf(name);
-                                if (i2 >= 0 && name.length() > 4) {
-                                    company = company.concat(com).concat(",");
-                                }
+                // 逐字查询公司
+                for (int i = 2; i < 49; i++) {
+                    if ((i > content.length())) {
+                        break;
+                    }
+                    if ((i1 - i) >= 0) {
+                        String com = content.substring(i1 - i, i1 + s1.length());
+                        String result = checkCompany(com);
+                        JSONObject jsonObject = JSONObject.parseObject(result);
+                        String errorCode = jsonObject.getString("error_code");
+                        if ("0".equals(errorCode)) {
+                            JSONObject result1 = JSONObject.parseObject(jsonObject.getString("result"));
+                            String name = result1.getString("name");
+                            int i3 = content.indexOf(name);
+                            if (i3 >= 0 && name.length() > 4) {
+                                company = company.concat(com).concat(",");
                             }
                         }
                     }
                 }
+
+
             }
         }
         // 结果处理
